@@ -1,26 +1,27 @@
-import { useEffect, useState } from "react";
 import "./App.css";
+import { useUser } from "./hooks/useUser";
+export const App = () => {
+  const { data, isLoading, error } = useUser();
 
-function App() {
-  const [users, setUsers] = useState([]);
-  const fetchData = async () => {
-    const res = await fetch("https://dummyjson.com/users");
-    const data = await res.json();
-    setUsers(data.users);
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
+  if (isLoading) return <h2 className="status">Loading...</h2>;
+  if (error) return <h2 className="status error">Error occurred</h2>;
+
   return (
-    <div className="App">
-      <h1>Users</h1>
-      <ul>
-        {users.map((user: any) => (
-          <li key={user.id}>{user.firstName}</li>
+    <div className="container">
+      <h1>User Dashboard</h1>
+      <div className="grid">
+        {data?.map((user) => (
+          <div className="card" key={user.id}>
+            <img src={user.image} alt={user.firstName} />
+            <h2>
+              {user.firstName} {user.lastName}
+            </h2>
+            <p>{user.email}</p>
+            <p className="role">{user.company?.title}</p>
+            <span className="age">Age: {user.age}</span>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
-}
-
-export default App;
+};
